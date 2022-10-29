@@ -5,4 +5,9 @@ function displayCurrentDay() {
   currentDayEl.text(currentDay);
 }
 
+// function loadEvents(); {
+//   // Load events saved in local storage to UI elements
+// };
+
+// loadEvents();
 setInterval(displayCurrentDay, 1000);
