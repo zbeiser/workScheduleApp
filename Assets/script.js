@@ -1,11 +1,11 @@
-//// Declare DOM hooks
+// Declare DOM hooks
 
 var currentDayEl = $('#currentDay');
 var saveEventBtnEl = $('.saveBtn');
-console.log(saveEventBtnEl);
-//// Declare state variables
 
-var kEventsArray = [
+// Declare state variables
+
+var eventsArray = [
   [""],
   [""],
   [""],
@@ -17,14 +17,14 @@ var kEventsArray = [
   [""],
 ];
 
-//// Display the day at top of page
+// Display the day at top of page
 
 function displayCurrentDay() {
   var currentDay = moment().format('dddd, MMM DD, YYYY');
   currentDayEl.text(currentDay);
 }
 
-//// Save event inside time-block textarea to localStorage
+// Save event inside time-block textarea to localStorage
 
 function saveEvent(ev) {
   var saveClick = ev.target
@@ -35,29 +35,54 @@ function saveEvent(ev) {
   
   var eventText = saveClick.previousElementSibling.value;
   // Hooks save buttons up to their respective textareas
-  for (var i = 0 ; i < kEventsArray.length; i++) {
+  for (var i = 0 ; i < eventsArray.length; i++) {
     if (i == saveClick.id) {
-      kEventsArray[i] = eventText;
+      eventsArray[i] = eventText;
     }
   }
 
-  localStorage.setItem("Stored Events", JSON.stringify(kEventsArray));
+  localStorage.setItem("Stored Events", JSON.stringify(eventsArray));
 }
 
-//// Adds click event listener to all save buttons with one for loop
+// Adds click event listener to all save buttons with one for loop
 
 for (var i = 0 ; i < saveEventBtnEl.length; i++) {
   saveEventBtnEl[i].addEventListener('click', saveEvent); 
 }
 
-//// Load events saved in local storage to the time-blocks' textarea upon webpage loading
+// Load events saved in local storage to the time-blocks' textarea upon webpage loading.
+// First if/else prevents null reading if there's no localStorage saved. 
+// For loop matches buttons up to their respective textareas by adding 9, since their ids
+// have a numerical difference of 9 between them.
 
-// function loadEvents() {
-// 
-// }
+function updateEvents() {
+  var loadEvents = JSON.parse(localStorage.getItem("Stored Events"));
+  if (loadEvents === null) {
+    eventsArray = [
+      [""],
+      [""],
+      [""],
+      [""],
+      [""],
+      [""],
+      [""],
+      [""],
+      [""],
+    ];
+  } else {
+    eventsArray = loadEvents;
+  }
+
+  for (var i = 0 ; i < eventsArray.length; i++) {
+    var loadText = document.getElementById(i + 9);
+    if (i == (loadText.id - 9)) {
+      loadText.value = eventsArray[i];
+    }
+  }
+}
 
 
 
-// loadEvents();
+updateEvents();
 
 setInterval(displayCurrentDay, 1000);
