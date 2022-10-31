@@ -1,10 +1,9 @@
 // Declare DOM hooks
-
 var currentDayEl = $('#currentDay');
 var saveEventBtnEl = $('.saveBtn');
+var textAreaEl = $('.description');
 
 // Declare state variables
-
 var eventsArray = [
   [""],
   [""],
@@ -17,18 +16,30 @@ var eventsArray = [
   [""],
 ];
 
-// Display the day at top of page
-
+// Display the current day at top of page
 function displayCurrentDay() {
   var currentDay = moment().format('dddd, MMM DD, YYYY');
   currentDayEl.text(currentDay);
 }
 
-// Save event inside time-block textarea to localStorage
+var currentTime = moment().format('H');
 
+for (var i = 0; i < textAreaEl.length; i++) {
+  if (Number(currentTime) > Number(textAreaEl[i].id)) {
+    textAreaEl[i].classList.add('past');
+  }
+  else if (Number(currentTime) === Number(textAreaEl[i].id)) {
+    textAreaEl[i].classList.add('present');
+  }
+  else if (Number(currentTime) < Number(textAreaEl[i].id)) {
+    textAreaEl[i].classList.add('future');
+  }
+}
+
+// Save event inside time-block textarea to localStorage
 function saveEvent(ev) {
   var saveClick = ev.target
-  // Retargets button if they click span icon
+  // Retargets button if they click the span save icon
   if (saveClick.className == "fas fa-save") {
     saveClick = saveClick.parentNode
   }
@@ -44,17 +55,13 @@ function saveEvent(ev) {
   localStorage.setItem("Stored Events", JSON.stringify(eventsArray));
 }
 
-// Adds click event listener to all save buttons with one for loop
-
+// Adds click event listener to all save buttons
 for (var i = 0 ; i < saveEventBtnEl.length; i++) {
   saveEventBtnEl[i].addEventListener('click', saveEvent); 
 }
 
 // Load events saved in local storage to the time-blocks' textarea upon webpage loading.
 // First if/else prevents null reading if there's no localStorage saved. 
-// For loop matches buttons up to their respective textareas by adding 9, since their ids
-// have a numerical difference of 9 between them.
-
 function updateEvents() {
   var loadEvents = JSON.parse(localStorage.getItem("Stored Events"));
   if (loadEvents === null) {
@@ -73,6 +80,7 @@ function updateEvents() {
     eventsArray = loadEvents;
   }
 
+  // Loads eventsArray index values up to their respective textareas. 
   for (var i = 0 ; i < eventsArray.length; i++) {
     var loadText = document.getElementById(i + 9);
     if (i == (loadText.id - 9)) {
@@ -80,8 +88,6 @@ function updateEvents() {
     }
   }
 }
-
-
 
 updateEvents();
 
